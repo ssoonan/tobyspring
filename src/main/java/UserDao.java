@@ -1,14 +1,15 @@
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void add (User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
         PreparedStatement ps = c.prepareStatement("INSERT INTO USERS VALUES (?, ?, ?)");
         ps.setString(1, user.getId());
         ps.setString(2, user.getName());
@@ -21,7 +22,7 @@ public class UserDao {
     }
 
     public User get(String id) {
-        try( Connection c = connectionMaker.makeConnection();
+        try( Connection c = dataSource.getConnection();
              PreparedStatement ps = c.prepareStatement("SELECT * FROM USERS WHERE id = ?")) {
             ps.setString(1, id);
 
@@ -36,7 +37,7 @@ public class UserDao {
     }
 
     public void delete(String id) {
-        try( Connection c = connectionMaker.makeConnection();
+        try( Connection c = dataSource.getConnection();
              PreparedStatement ps = c.prepareStatement("DELETE FROM USERS WHERE id = ?")) {
             ps.setString(1, id);
 
